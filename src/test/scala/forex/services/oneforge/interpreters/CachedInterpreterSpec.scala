@@ -22,7 +22,7 @@ class CachedInterpreterSpec extends BaseSpec {
   private val cache = MVar[(Instant, Map[Rate.Pair, Rate])]((Instant.EPOCH, Map.empty))
   private val ttl = 2.minutes
   private val delegate = mock[Algebra[Eff[AppStack, ?]]]
-  private val subj = new Cached[AppStack](delegate, CacheConfig(ttl), cache, clock)
+  private val subj = new Cached[AppStack](delegate, CacheConfig(ttl), clock, cache)
 
   private val pair = Rate.Pair(GBP, USD)
   private val rate = Rate(pair, Price(100.0), Timestamp.ofEpochSecond(clock.millis()))

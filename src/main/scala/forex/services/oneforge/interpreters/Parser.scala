@@ -20,9 +20,8 @@ object Parser {
     } yield Rate(pair, Price(price), Timestamp.ofEpochSecond(ts))
 
   def parse(json: String): Error Either Seq[Rate] =
-    io.circe.jawn
-      .parse(json)
-      .toOption
-      .flatMap(s ⇒ Decoder[Seq[Rate]].decodeJson(s).toOption)
-      .toRight(JsonParsing(json))
+    (for {
+      parsed ← io.circe.jawn.parse(json)
+      decoded ← Decoder[Seq[Rate]].decodeJson(parsed)
+    } yield decoded).left.map(_ ⇒ JsonParsing(json))
 }

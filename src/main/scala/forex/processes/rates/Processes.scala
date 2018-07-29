@@ -23,7 +23,7 @@ trait Processes[F[_]] {
         .flatMap[Error, Rate] { seq ⇒
           seq.filter(r ⇒ r.pair == pair) match {
             case Seq(rate) ⇒ EitherT.pure(rate)
-            case _         ⇒ EitherT.fromEither(Left(Error.NotFound))
+            case _         ⇒ EitherT.fromEither(Left(Error.NotFound(pair)))
           }
         }
         .value

@@ -8,14 +8,15 @@ object ApiExceptionHandler extends LazyLogging {
 
   def apply(): server.ExceptionHandler =
     server.ExceptionHandler {
-      case e: RatesError ⇒
+      case RatesError.NotFound(pair) ⇒
         ctx ⇒
-          val msg = "Something went wrong in the rates process"
-          logger.error(msg, e)
-          ctx.complete(msg)
+          ctx.complete(s"Rate for '$pair' not found")
+      case RatesError.ExternalApi ⇒
+        ctx ⇒
+          ctx.complete(s"Something went wrong with external API call")
       case e: Throwable ⇒
         ctx ⇒
-          val msg = "Something else went wrong"
+          val msg = "Something went wrong"
           logger.error(msg, e)
           ctx.complete(msg)
     }

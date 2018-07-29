@@ -3,7 +3,7 @@ package forex.services.oneforge.interpreters
 import java.time.{ Clock, Instant }
 
 import forex.config.CacheConfig
-import forex.domain.{ Currency, Rate }
+import forex.domain.Rate
 import forex.services.oneforge.{ Algebra, Error }
 import monix.eval.MVar
 import org.atnos.eff.Eff
@@ -12,8 +12,8 @@ import org.atnos.eff.addon.monix.task.{ _task, fromTask }
 final class Cached[R] private[oneforge] (
     delegate: Algebra[Eff[R, ?]],
     cacheConfig: CacheConfig,
-    cache: MVar[(Instant, Map[Rate.Pair, Rate])],
-    clock: Clock
+    clock: Clock = Clock.systemUTC(),
+    cache: MVar[(Instant, Map[Rate.Pair, Rate])] = MVar[(Instant, Map[Rate.Pair, Rate])]((Instant.EPOCH, Map.empty))
 )(
     implicit
     m1: _task[R]

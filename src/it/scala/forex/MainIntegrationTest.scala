@@ -4,23 +4,21 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport
 import forex.domain.Currency.GBP
-import forex.domain.{Currency, Price, Rate}
+import forex.domain.{ Currency, Price, Rate }
 import forex.interfaces.api.rates.Protocol._
 import forex.main.Application
 import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.{FlatSpec, Matchers}
 
 class MainIntegrationTest
-    extends FlatSpec
-    with Matchers
+    extends BaseSpec
     with ScalatestRouteTest
     with ErrorAccumulatingCirceSupport
     with GeneratorDrivenPropertyChecks {
 
   behavior of "App"
 
-  val app: Application = Main.app.fold(fail("App does not exist"))(identity)
+  val app: Application = Main.app.run.fold(fail("App does not exist"))(identity)
 
   val allPairs: Gen[Rate.Pair] = for {
     from ← Gen.oneOf(Currency.values)

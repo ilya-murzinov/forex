@@ -38,7 +38,7 @@ final class OneForgeClient[R](
         req ⇒
           Source
             .fromFuture(Http().singleRequest(req))
-            .flatMapConcat(_.entity.dataBytes)
+            .mapAsync(1)(_.entity.toStrict(config.readTimeout).map(_.data))
       )
 
   override def getAll(pairs: Seq[Rate.Pair]): Eff[R, Error Either Seq[Rate]] =
@@ -49,11 +49,7 @@ final class OneForgeClient[R](
           .via(streamingRequestFlow)
           .runWith(Sink.head)
       )
-    ).map { r ⇒
-      val string = r.utf8String
-      logger.info(s"Response from 1Forge API: $string")
-      Parser.parse(string)
-    }
+    ).map(r ⇒ Parser.parse(r.utf8String))
 
   private[this] def quotesRequest(pairs: Seq[Rate.Pair]): Uri =
     Uri(config.baseUri)

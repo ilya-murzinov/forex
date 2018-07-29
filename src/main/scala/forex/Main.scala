@@ -4,12 +4,16 @@ import cats.Eval
 import com.typesafe.scalalogging._
 import forex.config._
 import forex.main._
+import monix.eval.Task
 import org.zalando.grafter._
+
+import scala.concurrent.Await
+import scala.concurrent.duration.DurationInt
 
 object Main extends LazyLogging {
 
-  val app: Option[Application] = {
-    pureconfig.loadConfig[ApplicationConfig]("app") match {
+  val app: Task[Option[Application]] = {
+    Task.eval(pureconfig.loadConfig[ApplicationConfig]("app") match {
       case Left(errors) ⇒
         logger.error(s"Errors loading the configuration:\n${errors.toList.mkString("- ", "\n- ", "")}")
         None
@@ -30,12 +34,17 @@ object Main extends LazyLogging {
               Eval.now(Some(application))
           }
           .value
-    }
+    })
   }
 
   def main(args: Array[String]): Unit = {
+    import monix.execution.Scheduler.Implicits.global
+
+    val app1 = Await.result(app.runAsync, 10.seconds)
     sys.addShutdownHook {
-      app.foreach(Rewriter.stopAll)
+      app1.foreach { g ⇒
+        Rewriter.stopAll(g)
+      }
     }
   }
 }

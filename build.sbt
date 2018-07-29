@@ -1,3 +1,5 @@
+lazy val IntegrationTest = config("it") extend Test
+
 lazy val transfers = project
   .in(file("."))
   .configs(IntegrationTest)

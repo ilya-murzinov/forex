@@ -7,5 +7,4 @@ object Error {
   final case object Generic extends Error
   final case class JsonParsing(response: String) extends Error
   final case class ExternalApi(underlying: Throwable) extends Error
-  final case class System(underlying: Throwable) extends Error
 }
