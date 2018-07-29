@@ -8,9 +8,5 @@ import org.zalando.grafter.macros._
 @readerOf[ApplicationConfig]
 case class Runners() {
 
-  def runApp[R](
-      app: AppEffect[R]
-  ): Task[R] =
-    app.runAsync
-
+  def runApp[R](app: AppEffect[R]): Task[R] = app.runAsync
 }

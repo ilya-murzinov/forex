@@ -11,18 +11,19 @@ object Processes {
 }
 
 trait Processes[F[_]] {
-  import messages._
   import converters._
+  import messages._
 
-  def get(
-      request: GetRequest
-  )(
-      implicit
-      M: Monad[F],
-      OneForge: OneForge[F]
-  ): F[Error Either Rate] =
-    (for {
-      result ← EitherT(OneForge.get(Rate.Pair(request.from, request.to))).leftMap(toProcessError)
-    } yield result).value
-
+  def get(request: GetRequest)(implicit M: Monad[F], OneForge: OneForge[F]): F[Error Either Rate] = {
+    val pair = Rate.Pair(request.from, request.to)
+    EitherT(OneForge.getAll(Seq(pair)))
+      .leftMap(toProcessError)
+      .flatMap[Error, Rate] { seq ⇒
+        seq.filter(r ⇒ r.pair == pair) match {
+          case Seq(rate) ⇒ EitherT.pure(rate)
+          case _         ⇒ EitherT.fromEither(Left(Error.NotFound))
+        }
+      }
+      .value
+  }
 }

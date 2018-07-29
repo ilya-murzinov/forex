@@ -8,31 +8,34 @@ import org.zalando.grafter._
 
 object Main extends App with LazyLogging {
 
-  var app: Option[Application] = None
+  lazy val app: Option[Application] = {
+    pureconfig.loadConfig[ApplicationConfig]("app") match {
+      case Left(errors) ⇒
+        logger.error(s"Errors loading the configuration:\n${errors.toList.mkString("- ", "\n- ", "")}")
+        None
+      case Right(applicationConfig) ⇒
+        val application = configure[Application](applicationConfig).configure()
 
-  pureconfig.loadConfig[ApplicationConfig]("app") match {
-    case Left(errors) ⇒
-      logger.error(s"Errors loading the configuration:\n${errors.toList.mkString("- ", "\n- ", "")}")
-    case Right(applicationConfig) ⇒
-      val application = configure[Application](applicationConfig).configure()
-
-      Rewriter
-        .startAll(application)
-        .flatMap {
-          case results if results.exists(!_.success) ⇒
-            logger.error(toStartErrorString(results))
-            Rewriter.stopAll(application).map(_ ⇒ ())
-          case results ⇒
-            logger.info(toStartSuccessString(results))
-            Eval.now {
-              app = Some(application)
-            }
-        }
-        .value
+        Rewriter
+          .startAll(application)
+          .flatMap {
+            case results if results.exists(!_.success) ⇒
+              logger.error(toStartErrorString(results))
+              Rewriter
+                .stopAll(application)
+                .map(_ ⇒ ())
+                .map(_ ⇒ None)
+            case results ⇒
+              logger.info(toStartSuccessString(results))
+              Eval.now(Some(application))
+          }
+          .value
+    }
   }
+
+  app.isDefined
 
   sys.addShutdownHook {
-    app.foreach(Rewriter.stopAll(_))
+    app.foreach(Rewriter.stopAll)
   }
-
 }

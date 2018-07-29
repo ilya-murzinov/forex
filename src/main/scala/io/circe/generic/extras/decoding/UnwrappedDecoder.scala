@@ -10,11 +10,10 @@ final object UnwrappedDecoder {
       implicit
       gen: Lazy[Generic.Aux[A, R :: HNil]],
       decode: Decoder[R]
-  ): UnwrappedDecoder[A] = new UnwrappedDecoder[A] {
-    override def apply(c: HCursor): Decoder.Result[A] =
+  ): UnwrappedDecoder[A] =
+    (c: HCursor) ⇒
       decode(c) match {
         case Right(unwrapped) ⇒ Right(gen.value.from(unwrapped :: HNil))
-        case l @ Left(_) ⇒ l.asInstanceOf[Decoder.Result[A]]
-      }
-  }
+        case l @ Left(_)      ⇒ l.asInstanceOf[Decoder.Result[A]]
+    }
 }

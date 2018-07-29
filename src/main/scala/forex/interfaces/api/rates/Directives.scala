@@ -14,9 +14,7 @@ trait Directives {
       to ← parameter('to.as(currency))
     } yield GetApiRequest(from, to)
 
-  private val currency =
-    Unmarshaller.strict[String, Currency](Currency.fromString)
-
+  private val currency = Unmarshaller.strict[String, Currency](Currency.withNameInsensitive)
 }
 
 object Directives extends Directives

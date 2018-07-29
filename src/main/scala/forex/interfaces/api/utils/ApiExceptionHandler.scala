@@ -1,18 +1,22 @@
 package forex.interfaces.api.utils
 
 import akka.http.scaladsl._
+import com.typesafe.scalalogging.LazyLogging
 import forex.processes._
 
-object ApiExceptionHandler {
+object ApiExceptionHandler extends LazyLogging {
 
   def apply(): server.ExceptionHandler =
     server.ExceptionHandler {
-      case _: RatesError ⇒
+      case e: RatesError ⇒
         ctx ⇒
-          ctx.complete("Something went wrong in the rates process")
-      case _: Throwable ⇒
+          val msg = "Something went wrong in the rates process"
+          logger.error(msg, e)
+          ctx.complete(msg)
+      case e: Throwable ⇒
         ctx ⇒
-          ctx.complete("Something else went wrong")
+          val msg = "Something else went wrong"
+          logger.error(msg, e)
+          ctx.complete(msg)
     }
-
 }
