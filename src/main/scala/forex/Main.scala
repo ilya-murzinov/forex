@@ -6,9 +6,9 @@ import forex.config._
 import forex.main._
 import org.zalando.grafter._
 
-object Main extends App with LazyLogging {
+object Main extends LazyLogging {
 
-  lazy val app: Option[Application] = {
+  val app: Option[Application] = {
     pureconfig.loadConfig[ApplicationConfig]("app") match {
       case Left(errors) ⇒
         logger.error(s"Errors loading the configuration:\n${errors.toList.mkString("- ", "\n- ", "")}")
@@ -33,9 +33,9 @@ object Main extends App with LazyLogging {
     }
   }
 
-  app.isDefined
-
-  sys.addShutdownHook {
-    app.foreach(Rewriter.stopAll)
+  def main(args: Array[String]): Unit = {
+    sys.addShutdownHook {
+      app.foreach(Rewriter.stopAll)
+    }
   }
 }

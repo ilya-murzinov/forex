@@ -11,8 +11,8 @@ object Timestamp {
   def now: Timestamp =
     Timestamp(OffsetDateTime.now)
 
-  def ofEpochMilli(epochMillis: Long) =
-    Timestamp(OffsetDateTime.ofInstant(Instant.ofEpochMilli(epochMillis), ZoneOffset.UTC))
+  def ofEpochSecond(epochSecond: Long) =
+    Timestamp(OffsetDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), ZoneOffset.UTC))
 
   implicit val encoder: Encoder[Timestamp] = deriveUnwrappedEncoder[Timestamp]
 

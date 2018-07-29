@@ -40,6 +40,7 @@ lazy val transfers = project
       "com.typesafe.akka"          %% "akka-http-testkit"    % "10.1.3" % "test, it",
       "org.scalatest"              %% "scalatest"            % "3.0.5" % "test, it",
       "org.scalacheck"             %% "scalacheck"           % "1.14.0" % "test, it",
+      "org.scalamock"              %% "scalamock"            % "4.1.0" % "test",
       compilerPlugin("org.spire-math"  %% "kind-projector" % "0.9.4"),
       compilerPlugin("org.scalamacros" %% "paradise"       % "2.1.1" cross CrossVersion.full)
     ),

@@ -13,9 +13,17 @@ object Rate {
   final case class Pair(
       from: Currency,
       to: Currency
-  )
+  ) {
+    def isMono: Boolean = from == to
+  }
 
   object Pair {
+    val allPairs = for {
+      from ← Currency.values
+      to ← Currency.values
+      if from != to
+    } yield Rate.Pair(from, to)
+
     implicit val encoder: Encoder[Pair] =
       deriveEncoder[Pair]
   }

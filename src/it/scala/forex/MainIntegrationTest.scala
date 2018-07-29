@@ -4,18 +4,17 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport
 import forex.domain.Currency.GBP
-import forex.domain.{Currency, Price}
+import forex.domain.{ Currency, Price }
 import forex.interfaces.api.rates.Protocol._
 import forex.main.Application
 import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
+import org.scalatest.{ FlatSpec, Matchers }
 
 class MainIntegrationTest
     extends FlatSpec
     with Matchers
     with ScalatestRouteTest
-    with BeforeAndAfterAll
     with ErrorAccumulatingCirceSupport
     with GeneratorDrivenPropertyChecks {
 
@@ -32,7 +31,10 @@ class MainIntegrationTest
         res shouldBe a[GetApiResponse]
         res.from shouldBe from
         res.to shouldBe to
-        res.price shouldBe Price(100.0)
+        if (from == to)
+          res.price shouldBe Price(1.0)
+        else
+          res.price shouldBe Price(100.0)
       }
     }
   }
