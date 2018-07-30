@@ -7,7 +7,7 @@ import forex.BaseSpec
 import forex.config.CacheConfig
 import forex.domain.Currency.{ GBP, USD }
 import forex.domain.{ Price, Rate, Timestamp }
-import forex.main.AppStack
+import forex.main.{ AppStack, CacheState }
 import forex.services.oneforge.Algebra
 import monix.eval.MVar
 import org.atnos.eff.Eff
@@ -19,7 +19,7 @@ class CachedInterpreterSpec extends BaseSpec {
 
   private val now = Instant.now()
   private val clock = Clock.fixed(now, ZoneOffset.UTC)
-  private val cache = MVar[(Instant, Map[Rate.Pair, Rate])]((Instant.EPOCH, Map.empty))
+  private val cache = MVar[CacheState]((Instant.EPOCH, Map.empty)).run
   private val ttl = 2.minutes
   private val delegate = mock[Algebra[Eff[AppStack, ?]]]
   private val subj = new Cached[AppStack](delegate, CacheConfig(ttl), clock, cache)

@@ -7,7 +7,7 @@ import forex.config._
 import org.zalando.grafter._
 import org.zalando.grafter.macros._
 
-@readerOf[ApplicationConfig]
+@readerOf[ApplicationEnvironment]
 case class ActorSystems(config: AkkaConfig) extends Start with Stop {
 
   implicit lazy val system: ActorSystem =

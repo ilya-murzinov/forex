@@ -6,19 +6,23 @@ import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport
 import forex.domain.Currency.GBP
 import forex.domain.{ Currency, Price, Rate }
 import forex.interfaces.api.rates.Protocol._
-import forex.main.Application
 import org.scalacheck.Gen
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.zalando.grafter.Rewriter
 
 class MainIntegrationTest
     extends BaseSpec
     with ScalatestRouteTest
+    with BeforeAndAfterAll
     with ErrorAccumulatingCirceSupport
     with GeneratorDrivenPropertyChecks {
 
   behavior of "App"
 
-  val app: Application = Main.app.run.fold(fail("App does not exist"))(identity)
+  val (app, _) = Main.startedApp.run
+
+  override def afterAll: Unit = Rewriter.stopAll(app)
 
   val allPairs: Gen[Rate.Pair] = for {
     from ← Gen.oneOf(Currency.values)

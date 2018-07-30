@@ -6,7 +6,7 @@ import forex.interfaces.api.utils._
 import forex.main._
 import org.zalando.grafter.macros._
 
-@readerOf[ApplicationConfig]
+@readerOf[ApplicationEnvironment]
 case class Routes(
     processes: Processes,
     runners: Runners

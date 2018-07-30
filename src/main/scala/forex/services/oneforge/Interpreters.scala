@@ -1,6 +1,9 @@
 package forex.services.oneforge
 
+import java.time.Clock
+
 import forex.config.{ CacheConfig, OneForgeConfig }
+import forex.main
 import forex.main.{ ActorSystems, Executors }
 import forex.services.oneforge.interpreters._
 import org.atnos.eff._
@@ -22,9 +25,11 @@ object Interpreters {
 
   def cached[R](
       cacheConfig: CacheConfig,
-      delegate: Algebra[Eff[R, ?]]
+      clock: Clock,
+      delegate: Algebra[Eff[R, ?]],
+      cache: main.Cache
   )(
       implicit
       m1: _task[R]
-  ): Algebra[Eff[R, ?]] = new Cached[R](delegate, cacheConfig)
+  ): Algebra[Eff[R, ?]] = new Cached[R](delegate, cacheConfig, clock, cache)
 }

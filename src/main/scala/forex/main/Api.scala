@@ -8,7 +8,7 @@ import org.zalando.grafter.macros._
 import forex.config._
 import forex.interfaces.api.Routes
 
-@readerOf[ApplicationConfig]
+@readerOf[ApplicationEnvironment]
 case class Api(
     config: ApiConfig,
     actorSystems: ActorSystems,

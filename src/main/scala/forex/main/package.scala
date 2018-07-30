@@ -1,6 +1,9 @@
 package forex
 
-import monix.eval.Task
+import java.time.Instant
+
+import forex.domain.Rate
+import monix.eval.{ MVar, Task }
 import org.atnos.eff._
 import org.zalando.grafter._
 
@@ -8,6 +11,9 @@ package object main {
 
   type AppStack = Fx.fx1[Task]
   type AppEffect[R] = Eff[AppStack, R]
+
+  type CacheState = (Instant, Map[Rate.Pair, Rate])
+  type Cache = MVar[CacheState]
 
   def toStartErrorString(results: List[StartResult]): String =
     s"Application startup failed. Modules: ${results

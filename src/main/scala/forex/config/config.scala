@@ -1,8 +1,18 @@
 package forex.config
 
+import java.time.Clock
+
+import forex.main.Cache
 import org.zalando.grafter.macros._
 
 import scala.concurrent.duration.FiniteDuration
+
+@readers
+case class ApplicationEnvironment(
+    config: ApplicationConfig,
+    cache: Cache,
+    clock: Clock
+)
 
 @readers
 case class ApplicationConfig(
@@ -10,8 +20,8 @@ case class ApplicationConfig(
     api: ApiConfig,
     executors: ExecutorsConfig,
     oneForge: OneForgeConfig,
-    cache: CacheConfig,
-    dummyInterpreter: Boolean
+    cacheConfig: CacheConfig,
+    dummyInterpreter: Boolean,
 )
 
 case class AkkaConfig(

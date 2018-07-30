@@ -1,23 +1,29 @@
 package forex.main
 
+import java.time.Clock
+
 import forex.config._
 import forex.{ processes ⇒ p, services ⇒ s }
 import org.zalando.grafter.macros._
 
-@readerOf[ApplicationConfig]
+@readerOf[ApplicationEnvironment]
 case class Processes(
     oneForgeConfig: OneForgeConfig,
     executors: Executors,
-    cache: CacheConfig,
+    cacheConfig: CacheConfig,
     dummyInterpreter: Boolean,
-    actorSystems: ActorSystems
+    actorSystems: ActorSystems,
+    cache: Cache,
+    clock: Clock
 ) {
 
   implicit final lazy val _oneForge: s.OneForge[AppEffect] =
     if (dummyInterpreter)
       s.OneForge.dummy[AppStack]
-    else
-      s.OneForge.cached[AppStack](cache, s.OneForge.real[AppStack](oneForgeConfig, executors, actorSystems))
+    else {
+      val real = s.OneForge.real[AppStack](oneForgeConfig, executors, actorSystems)
+      s.OneForge.cached[AppStack](cacheConfig, clock, real, cache)
+    }
 
   final val Rates = p.Rates[AppEffect]
 

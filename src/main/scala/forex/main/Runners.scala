@@ -5,7 +5,7 @@ import monix.eval.Task
 import org.atnos.eff.syntax.addon.monix.task._
 import org.zalando.grafter.macros._
 
-@readerOf[ApplicationConfig]
+@readerOf[ApplicationEnvironment]
 case class Runners() {
 
   def runApp[R](app: AppEffect[R]): Task[R] = app.runAsync

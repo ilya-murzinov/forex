@@ -1,5 +1,9 @@
 lazy val IntegrationTest = config("it") extend Test
 
+val circeVersion = "0.9.3"
+val effVersion = "5.3.0"
+val akkaVersion = "10.1.3"
+
 lazy val transfers = project
   .in(file("."))
   .configs(IntegrationTest)
@@ -7,7 +11,6 @@ lazy val transfers = project
     name := "forex",
     version := "0.1.0",
     scalaVersion := "2.12.6",
-    cancelable in Global := true,
     scalacOptions ++= Seq(
       "-deprecation",
       "-encoding",
@@ -24,22 +27,22 @@ lazy val transfers = project
     libraryDependencies ++= Seq(
       "com.github.pureconfig"      %% "pureconfig"           % "0.9.1",
       "com.softwaremill.quicklens" %% "quicklens"            % "1.4.11",
-      "com.typesafe.akka"          %% "akka-actor"           % "2.4.19",
-      "com.typesafe.akka"          %% "akka-http"            % "10.0.10",
-      "de.heikoseeberger"          %% "akka-http-circe"      % "1.18.1",
-      "io.circe"                   %% "circe-core"           % "0.8.0",
-      "io.circe"                   %% "circe-generic"        % "0.8.0",
-      "io.circe"                   %% "circe-generic-extras" % "0.8.0",
-      "io.circe"                   %% "circe-java8"          % "0.8.0",
-      "io.circe"                   %% "circe-jawn"           % "0.8.0",
-      "org.atnos"                  %% "eff"                  % "4.5.0",
-      "org.atnos"                  %% "eff-monix"            % "4.5.0",
-      "org.typelevel"              %% "cats-core"            % "0.9.0",
-      "org.zalando"                %% "grafter"              % "2.3.0",
+      "com.typesafe.akka"          %% "akka-actor"           % "2.5.14",
+      "com.typesafe.akka"          %% "akka-http"            % akkaVersion,
+      "de.heikoseeberger"          %% "akka-http-circe"      % "1.21.0",
+      "io.circe"                   %% "circe-core"           % circeVersion,
+      "io.circe"                   %% "circe-generic"        % circeVersion,
+      "io.circe"                   %% "circe-generic-extras" % circeVersion,
+      "io.circe"                   %% "circe-java8"          % circeVersion,
+      "io.circe"                   %% "circe-jawn"           % circeVersion,
+      "org.atnos"                  %% "eff"                  % effVersion,
+      "org.atnos"                  %% "eff-monix"            % effVersion,
+      "org.typelevel"              %% "cats-core"            % "1.1.0",
+      "org.zalando"                %% "grafter"              % "2.6.1",
       "ch.qos.logback"             % "logback-classic"       % "1.2.3",
       "com.typesafe.scala-logging" %% "scala-logging"        % "3.7.2",
       "com.beachape"               %% "enumeratum"           % "1.5.13",
-      "com.typesafe.akka"          %% "akka-http-testkit"    % "10.1.3" % "test, it",
+      "com.typesafe.akka"          %% "akka-http-testkit"    % akkaVersion % "test, it",
       "org.scalatest"              %% "scalatest"            % "3.0.5" % "test, it",
       "org.scalacheck"             %% "scalacheck"           % "1.14.0" % "test, it",
       "org.scalamock"              %% "scalamock"            % "4.1.0" % "test",
@@ -49,7 +52,6 @@ lazy val transfers = project
     Defaults.itSettings,
     parallelExecution in IntegrationTest := false,
     fork in IntegrationTest := true,
-    javaOptions in IntegrationTest += "-Dlogback.configurationFile=disable.logs.xml",
     javaOptions in IntegrationTest += "-Dakka.loglevel=ERROR"
   )
   .enablePlugins(JavaAppPackaging)

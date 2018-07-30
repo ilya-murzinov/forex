@@ -7,7 +7,7 @@ import org.zalando.grafter.macros._
 
 import scala.concurrent.ExecutionContext
 
-@readerOf[ApplicationConfig]
+@readerOf[ApplicationEnvironment]
 case class Executors(
     config: ExecutorsConfig,
     actorSystems: ActorSystems
